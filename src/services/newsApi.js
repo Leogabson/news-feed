@@ -1,13 +1,7 @@
 import axios from "axios";
-import {
-  API_KEY,
-  API_BASE_URL,
-  ENDPOINTS,
-  DEFAULT_COUNTRY,
-  DEFAULT_PAGE_SIZE,
-  DEFAULT_LANGUAGE,
-} from "../utils/constants";
+import { API_KEY, API_BASE_URL, DEFAULT_LANGUAGE } from "../utils/constants";
 
+// Create axios instance with base configuration
 const newsApiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
@@ -16,26 +10,11 @@ const newsApiClient = axios.create({
   },
 });
 
-// Request interceptor to add API key
-newsApiClient.interceptors.request.use(
-  (config) => {
-    config.params = {
-      ...config.params,
-      apiKey: API_KEY,
-    };
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
 // Response interceptor for error handling
 newsApiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      // Server responded with error
       const { status, data } = error.response;
 
       switch (status) {
@@ -59,40 +38,45 @@ newsApiClient.interceptors.response.use(
 );
 
 /**
- * Fetch top headlines
+ * Fetch top headlines from GNews API
  * @param {Object} params - Query parameters
- * @param {string} params.country - Country code (default: 'us')
  * @param {string} params.category - News category
- * @param {number} params.pageSize - Number of articles
- * @param {number} params.page - Page number
+ * @param {number} params.pageSize - Number of articles (max 10 for free plan)
  * @returns {Promise<Object>} News articles data
  */
 export const getTopHeadlines = async ({
-  country = DEFAULT_COUNTRY,
   category = "",
-  pageSize = DEFAULT_PAGE_SIZE,
-  page = 1,
+  pageSize = 10,
 } = {}) => {
   try {
     const params = {
-      country,
-      pageSize,
-      page,
+      apikey: API_KEY,
+      lang: DEFAULT_LANGUAGE,
+      max: pageSize,
+      country: "us",
     };
 
-    // Only add category if it's not empty
+    // GNews uses 'topic' instead of 'category'
     if (category) {
-      params.category = category;
+      const topicMap = {
+        general: "breaking-news",
+        business: "business",
+        technology: "technology",
+        entertainment: "entertainment",
+        sports: "sports",
+        science: "science",
+        health: "health",
+        politics: "nation",
+      };
+      params.topic = topicMap[category] || "breaking-news";
     }
 
-    const response = await newsApiClient.get(ENDPOINTS.TOP_HEADLINES, {
-      params,
-    });
+    const response = await newsApiClient.get("/top-headlines", { params });
 
     return {
       articles: response.data.articles || [],
-      totalResults: response.data.totalResults || 0,
-      status: response.data.status,
+      totalResults: response.data.totalArticles || 0,
+      status: "ok",
     };
   } catch (error) {
     throw error;
@@ -100,42 +84,31 @@ export const getTopHeadlines = async ({
 };
 
 /**
- * Search for news articles
+ * Search for news articles in GNews API
  * @param {Object} params - Query parameters
  * @param {string} params.query - Search query
- * @param {string} params.category - News category
- * @param {number} params.pageSize - Number of articles
- * @param {number} params.page - Page number
- * @param {string} params.language - Language code
+ * @param {number} params.pageSize - Number of articles (max 10 for free plan)
  * @returns {Promise<Object>} News articles data
  */
-export const searchNews = async ({
-  query,
-  category = "",
-  pageSize = DEFAULT_PAGE_SIZE,
-  page = 1,
-  language = DEFAULT_LANGUAGE,
-} = {}) => {
+export const searchNews = async ({ query, pageSize = 10 } = {}) => {
   try {
     if (!query || query.trim() === "") {
-      // If no query, return top headlines
-      return getTopHeadlines({ category, pageSize, page });
+      return getTopHeadlines({ pageSize });
     }
 
     const params = {
+      apikey: API_KEY,
       q: query,
-      pageSize,
-      page,
-      language,
-      sortBy: "publishedAt",
+      lang: DEFAULT_LANGUAGE,
+      max: pageSize,
     };
 
-    const response = await newsApiClient.get(ENDPOINTS.EVERYTHING, { params });
+    const response = await newsApiClient.get("/search", { params });
 
     return {
       articles: response.data.articles || [],
-      totalResults: response.data.totalResults || 0,
-      status: response.data.status,
+      totalResults: response.data.totalArticles || 0,
+      status: "ok",
     };
   } catch (error) {
     throw error;
@@ -147,23 +120,19 @@ export const searchNews = async ({
  * @param {Object} params - Query parameters
  * @param {string} params.category - News category
  * @param {string} params.searchQuery - Optional search query
- * @param {number} params.pageSize - Number of articles
- * @param {number} params.page - Page number
+ * @param {number} params.pageSize - Number of articles (max 10 for free plan)
  * @returns {Promise<Object>} News articles data
  */
 export const getNewsByCategory = async ({
   category = "",
   searchQuery = "",
-  pageSize = DEFAULT_PAGE_SIZE,
-  page = 1,
+  pageSize = 10,
 } = {}) => {
   try {
     if (searchQuery && searchQuery.trim() !== "") {
-      // If there's a search query, use search endpoint
-      return searchNews({ query: searchQuery, category, pageSize, page });
+      return searchNews({ query: searchQuery, pageSize });
     } else {
-      // Otherwise use top headlines
-      return getTopHeadlines({ category, pageSize, page });
+      return getTopHeadlines({ category, pageSize });
     }
   } catch (error) {
     throw error;

@@ -6,18 +6,13 @@ import {
   getArticleImage,
 } from "../../utils/helpers";
 
-/**
- * News Card component
- * Displays individual news article with image, title, description, and metadata
- * Fully responsive for mobile and desktop
- */
 const NewsCard = ({ article }) => {
-  const { title, description, url, urlToImage, publishedAt, source, author } =
+  const { title, description, url, image, publishedAt, source, author } =
     article;
 
   const cleanedTitle = cleanTitle(title);
   const truncatedDescription = truncateText(description, 120);
-  const articleImage = getArticleImage(urlToImage, "general");
+  const articleImage = getArticleImage(image, "general");
   const timeAgo = formatRelativeTime(publishedAt);
 
   const handleClick = () => {

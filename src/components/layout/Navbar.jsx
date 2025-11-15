@@ -5,14 +5,36 @@ import {
   MdMenu,
   MdClose,
 } from "react-icons/md";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
+/**
+ * Navigation Bar component
+ * Responsive header with logo and navigation
+ */
 const Navbar = () => {
   const [isDark, setIsDark] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  useEffect(() => {
+    // Check for saved theme preference or default to light mode
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      setIsDark(true);
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
+
   const toggleTheme = () => {
-    setIsDark(!isDark);
+    const newTheme = !isDark;
+    setIsDark(newTheme);
+
+    if (newTheme) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
   };
 
   const toggleMenu = () => {

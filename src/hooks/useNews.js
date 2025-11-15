@@ -22,7 +22,7 @@ const useNews = (category = "", searchQuery = "") => {
       const data = await getNewsByCategory({
         category,
         searchQuery,
-        pageSize: 20,
+        pageSize: 10,
         page: 1,
       });
 

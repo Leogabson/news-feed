@@ -15,10 +15,8 @@ function App() {
   const [activeCategory, setActiveCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Debounce search query to avoid excessive API calls
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  // Fetch news with custom hook
   const { articles, loading, error, retry } = useNews(
     activeCategory,
     debouncedSearchQuery
@@ -39,32 +37,26 @@ function App() {
   const remainingArticles = articles.slice(1);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background-gray">
-      {/* Navigation */}
+    <div className="min-h-screen flex flex-col bg-background-gray dark:bg-background-dark">
       <Navbar />
 
       {/* Main Content */}
       <main className="flex-1">
-        {/* Hero Section - Featured Article */}
         {!loading && !error && featuredArticle && !searchQuery && (
           <HeroSection article={featuredArticle} />
         )}
 
-        {/* Search Bar */}
         <div className="container-custom py-6 sm:py-8">
           <SearchBar onSearch={handleSearch} />
         </div>
 
-        {/* Category Filter */}
         <CategoryFilter
           activeCategory={activeCategory}
           onCategoryChange={handleCategoryChange}
         />
 
-        {/* Loading State */}
         {loading && <Loader />}
 
-        {/* Error State */}
         {error && !loading && <ErrorMessage message={error} onRetry={retry} />}
 
         {/* News Articles Grid */}
@@ -90,7 +82,6 @@ function App() {
         )}
       </main>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

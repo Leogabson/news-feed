@@ -4,16 +4,12 @@ import {
   getArticleImage,
 } from "../../utils/helpers";
 
-/**
- * Hero Section - Featured article display
- * Large showcase for top news story
- */
 const HeroSection = ({ article }) => {
   if (!article) return null;
 
-  const { title, description, url, urlToImage, publishedAt, source } = article;
+  const { title, description, url, image, publishedAt, source } = article;
   const cleanedTitle = cleanTitle(title);
-  const articleImage = getArticleImage(urlToImage, "general");
+  const articleImage = getArticleImage(image, "general");
   const timeAgo = formatRelativeTime(publishedAt);
 
   const handleClick = () => {
