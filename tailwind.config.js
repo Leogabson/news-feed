@@ -4,6 +4,9 @@ export default {
   darkMode: "class",
   theme: {
     extend: {
+      maxwidth: {
+        "7xl": "80rem",
+      },
       colors: {
         primary: {
           DEFAULT: "#2B7FDB",

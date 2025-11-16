@@ -3,9 +3,9 @@ export const API_BASE_URL = import.meta.env.VITE_NEWS_API_BASE_URL;
 
 export const CATEGORIES = [
   { id: "all", label: "All", value: "" },
-  { id: "top-stories", label: "Top Stories", value: "general" },
-  { id: "world", label: "World", value: "general" },
-  { id: "politics", label: "Politics", value: "politics" },
+  { id: "top-stories", label: "Top Stories", value: "breaking-news" },
+  { id: "world", label: "World", value: "world" },
+  { id: "politics", label: "Politics", value: "nation" },
   { id: "business", label: "Business", value: "business" },
   { id: "tech", label: "Tech", value: "technology" },
   { id: "sports", label: "Sports", value: "sports" },

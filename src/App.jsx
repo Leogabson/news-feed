@@ -24,12 +24,12 @@ function App() {
 
   const handleCategoryChange = (category) => {
     setActiveCategory(category);
-    setSearchQuery(""); // Clear search when changing category
+    setSearchQuery("");
   };
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setActiveCategory(""); // Clear category when searching
+    setActiveCategory("");
   };
 
   // Get featured article (first article)
