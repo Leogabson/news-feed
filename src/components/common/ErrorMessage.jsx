@@ -1,9 +1,5 @@
 import { MdError, MdRefresh } from "react-icons/md";
 
-/**
- * Error message component with retry option
- * Fully responsive for mobile and desktop
- */
 const ErrorMessage = ({ message, onRetry }) => {
   return (
     <div className="flex flex-col items-center justify-center py-8 px-4 sm:py-12">
